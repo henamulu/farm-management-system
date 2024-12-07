@@ -2,22 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Alert extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'type',
         'message',
         'severity',
         'farm_id',
-        'resource_id',
-        'is_read',
-        'triggered_by'
+        'read_at'
     ];
 
     protected $casts = [
-        'is_read' => 'boolean'
+        'read_at' => 'datetime'
     ];
 
     public function farm()
@@ -25,8 +26,23 @@ class Alert extends Model
         return $this->belongsTo(Farm::class);
     }
 
-    public function resource()
+    public function markAsRead()
     {
-        return $this->morphTo();
+        $this->update(['read_at' => now()]);
+    }
+
+    public function scopeUnread($query)
+    {
+        return $query->whereNull('read_at');
+    }
+
+    public function scopeByType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
+
+    public function scopeBySeverity($query, $severity)
+    {
+        return $query->where('severity', $severity);
     }
 } 

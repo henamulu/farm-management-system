@@ -23,7 +23,6 @@ class Employee extends Model
         'Technician' => 'Technician',
         'Operator' => 'Operator'
     ];
-
    
     protected $casts = [
         'hire_date' => 'date',

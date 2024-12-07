@@ -3,26 +3,26 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <!-- Header with actions -->
+                    <!-- Encabezado con acciones -->
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">{{ $farm->name }}</h2>
                         <div class="space-x-2">
                             <a href="{{ route('farms.edit', $farm) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                                Edit Farm
+                                Editar Granja
                             </a>
                             <form action="{{ route('farms.destroy', $farm) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                    Delete Farm
+                                    Eliminar Granja
                                 </button>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Information Grid -->
+                    <!-- Grid de información -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Farm Details -->
+                        <!-- Detalles de la Granja -->
                         <div>
                             <h3 class="text-lg font-semibold mb-4">General Information</h3>
                             <div class="bg-gray-50 p-4 rounded">
@@ -37,8 +37,8 @@
                         <div>
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-semibold">Employees</h3>
-                                <a href="{{ route('farms.employees.index', $farm) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                    View All Employees
+                                <a href="{{ route('farms.employees.create', $farm) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    New Employee
                                 </a>
                             </div>
                             <div class="bg-gray-50 p-4 rounded">
@@ -67,8 +67,8 @@
                         <div>
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-semibold">Inventory</h3>
-                                <a href="{{ route('farms.stocks.index', $farm) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    View All Items
+                                <a href="{{ route('farms.stocks.create', $farm) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    New Item
                                 </a>
                             </div>
                             <div class="bg-gray-50 p-4 rounded">
@@ -97,8 +97,8 @@
                         <div>
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-semibold">Machinery</h3>
-                                <a href="{{ route('farms.machinery.index', $farm) }}" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                                    View All Machinery
+                                <a href="{{ route('farms.machinery.create', $farm) }}" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                    New Machine
                                 </a>
                             </div>
                             <div class="bg-gray-50 p-4 rounded">
@@ -154,6 +154,16 @@
                         <a href="{{ route('farms.index') }}" class="text-blue-500 hover:text-blue-700">
                             ← Back to farm list
                         </a>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold mb-4">Plans</h3>
+                            <a href="{{ route('farms.plans.index', $farm) }}" 
+                               class="text-blue-600 hover:text-blue-900">
+                                View Plans
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

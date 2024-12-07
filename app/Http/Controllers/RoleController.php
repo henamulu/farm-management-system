@@ -19,7 +19,7 @@ class RoleController extends Controller
         $role = Role::create($validated);
 
         return response()->json([
-            'message' => 'Rol creado exitosamente',
+            'message' => 'Role created successfully',
             'data' => $role
         ]);
     }
@@ -36,7 +36,7 @@ class RoleController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => 'Rol asignado exitosamente'
+            'message' => 'Role assigned successfully'
         ]);
     }
 } 

@@ -9,19 +9,27 @@ class Plan extends Model
 {
     protected $fillable = [
         'farm_id',
-        'name',
-        'target_amount',
-        'actual_amount',
+        'farm_item',
+        'quantity',
+        'unit',
         'start_date',
         'end_date',
+        'operation_price',
         'status'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'target_amount' => 'decimal:2',
-        'actual_amount' => 'decimal:2'
+        'quantity' => 'decimal:2',
+        'operation_price' => 'decimal:2'
+    ];
+
+    public const STATUSES = [
+        'draft' => 'Draft',
+        'approved' => 'Approved',
+        'in_progress' => 'In Progress',
+        'completed' => 'Completed'
     ];
 
     public function farm(): BelongsTo

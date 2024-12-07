@@ -6,6 +6,10 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MachineryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WeatherDashboardController;
+use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PlanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -28,6 +32,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('farms.stocks', StockController::class);
     Route::resource('farms.employees', EmployeeController::class);
     Route::resource('farms.machinery', MachineryController::class);
+    Route::resource('messages', MessageController::class);
+    Route::resource('farms.plans', PlanController::class);
+    Route::post('plans/{plan}/approve', [PlanController::class, 'approve'])->name('plans.approve');
+
+    // New routes for weather and notifications
+    Route::get('/weather', [WeatherDashboardController::class, 'index'])->name('weather.dashboard');
+    Route::get('/notifications', [NotificationsController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/mark-as-read', [NotificationsController::class, 'markAsRead'])
+        ->name('notifications.mark-as-read');
+
     // Ruta de prueba de email
     Route::get('/test-email', function () {
         Mail::to('tu_correo@gmail.com')->send(new \App\Mail\TestMail());

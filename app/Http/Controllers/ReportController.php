@@ -19,13 +19,13 @@ class ReportController extends Controller
             'period_end' => 'required|date|after:period_start'
         ]);
 
-        // Obtener datos del stock
+        // Get stock data
         $stockData = Stock::where('farm_id', $validated['farm_id'])
             ->whereBetween('created_at', [$validated['period_start'], $validated['period_end']])
             ->get()
             ->groupBy('category');
 
-        // Crear reporte
+        // Create report
         $report = Report::create([
             'type' => 'stock',
             'period_start' => $validated['period_start'],
@@ -36,7 +36,7 @@ class ReportController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Reporte generado exitosamente',
+            'message' => 'Report generated successfully',
             'data' => $report
         ]);
     }
@@ -65,7 +65,7 @@ class ReportController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Reporte de actividades generado exitosamente',
+            'message' => 'Activity report generated successfully',
             'data' => $report
         ]);
     }
@@ -76,6 +76,6 @@ class ReportController extends Controller
             'report' => $report
         ]);
 
-        return $pdf->download("reporte_{$report->type}_{$report->id}.pdf");
+        return $pdf->download("report_{$report->type}_{$report->id}.pdf");
     }
 } 

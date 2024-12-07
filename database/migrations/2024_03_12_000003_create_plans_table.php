@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('farm_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->decimal('target_amount', 12, 2);
-            $table->decimal('actual_amount', 12, 2)->default(0);
+            $table->string('farm_item');
+            $table->decimal('quantity', 10, 2);
+            $table->string('unit');
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
+            $table->decimal('operation_price', 12, 2);
+            $table->string('status')->default('draft'); // draft, approved, in_progress, completed
             $table->timestamps();
         });
     }

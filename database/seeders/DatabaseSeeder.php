@@ -10,21 +10,16 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Crear usuario primero
-        User::create([
-            'name' => 'Henok',
-            'email' => 'henamulu@gmail.com',
-            'password' => Hash::make('nueva123')
-        ]);
-
-        // Luego ejecutar los demás seeders
+      // Luego ejecutar los demás seeders
         $this->call([
+            UserSeeder::class,
             FarmSeeder::class,
             EmployeeSeeder::class,
             StockSeeder::class,
             PlanSeeder::class,
             ExecutionSeeder::class,
-            MachinerySeeder::class
+            MachinerySeeder::class,
+            MessageSeeder::class,
         ]);
     }
 } 

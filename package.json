@@ -18,6 +18,8 @@
     },
     "dependencies": {
         "@types/swagger-ui-react": "^4.18.3",
+        "laravel-echo": "^1.17.1",
+        "pusher-js": "^8.4.0-rc2",
         "swagger-ui-react": "^5.18.2"
     }
 }

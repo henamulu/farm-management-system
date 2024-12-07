@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\WeatherData;
-use App\Models\Farm;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,68 +12,63 @@ class WeatherService
 
     public function __construct()
     {
-        $this->apiKey = config('services.weather.api_key');
-        $this->baseUrl = config('services.weather.base_url');
+        $this->apiKey = config('weather.api_key');
+        $this->baseUrl = config('weather.api_url');
     }
 
-    public function getForecast(Farm $farm)
+    public function getCurrentWeather($latitude, $longitude)
     {
-        $cacheKey = "weather_forecast_{$farm->id}";
+        $cacheKey = "weather_{$latitude}_{$longitude}";
 
-        return Cache::remember($cacheKey, 3600, function () use ($farm) {
-            $response = Http::get("{$this->baseUrl}/forecast", [
-                'lat' => $farm->latitude,
-                'lon' => $farm->longitude,
-                'appid' => $this->apiKey,
-                'units' => 'metric'
+        return Cache::remember($cacheKey, 1800, function () use ($latitude, $longitude) {
+            $response = Http::get("{$this->baseUrl}/current", [
+                'key' => $this->apiKey,
+                'lat' => $latitude,
+                'lon' => $longitude,
             ]);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                return $this->processWeatherData($farm, $data);
-            }
-
-            throw new \Exception('Error al obtener datos meteorológicos');
+            return $response->json();
         });
     }
 
-    private function processWeatherData(Farm $farm, array $data)
+    public function getForecast($latitude, $longitude, $days = 5)
     {
-        $weatherData = WeatherData::create([
-            'farm_id' => $farm->id,
-            'temperature' => $data['main']['temp'],
-            'humidity' => $data['main']['humidity'],
-            'precipitation' => $data['rain']['1h'] ?? 0,
-            'wind_speed' => $data['wind']['speed'],
-            'weather_condition' => $data['weather'][0]['main'],
-            'forecast_date' => now(),
-            'data_source' => 'OpenWeatherMap',
-            'alerts' => $this->generateAlerts($data)
-        ]);
+        $cacheKey = "forecast_{$latitude}_{$longitude}_{$days}";
 
-        return $weatherData;
+        return Cache::remember($cacheKey, 3600, function () use ($latitude, $longitude, $days) {
+            $response = Http::get("{$this->baseUrl}/forecast", [
+                'key' => $this->apiKey,
+                'lat' => $latitude,
+                'lon' => $longitude,
+                'days' => $days
+            ]);
+
+            return $response->json();
+        });
     }
 
-    private function generateAlerts($data)
+    public function checkForAlerts($farmId, $latitude, $longitude)
     {
-        $alerts = [];
+        $weather = $this->getCurrentWeather($latitude, $longitude);
         
-        // Alertas por temperatura
-        if ($data['main']['temp'] > 35) {
-            $alerts[] = [
-                'type' => 'high_temperature',
-                'message' => 'Temperatura extremadamente alta'
-            ];
+        // Check for severe weather conditions
+        if ($this->isSevereWeather($weather)) {
+            app(AlertService::class)->createWeatherAlert(
+                $this->getSevereWeatherCondition($weather),
+                $farmId
+            );
         }
+    }
 
-        // Alertas por lluvia
-        if (($data['rain']['1h'] ?? 0) > 10) {
-            $alerts[] = [
-                'type' => 'heavy_rain',
-                'message' => 'Lluvia intensa prevista'
-            ];
-        }
+    private function isSevereWeather($weather)
+    {
+        // Implement weather severity checks based on your criteria
+        return false;
+    }
 
-        return $alerts;
+    private function getSevereWeatherCondition($weather)
+    {
+        // Return the severe weather condition description
+        return '';
     }
 } 
