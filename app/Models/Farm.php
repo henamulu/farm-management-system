@@ -3,24 +3,46 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Farm extends Model
 {
     protected $fillable = [
         'name',
+        'description',
         'location',
-        'owner_id',
         'size',
-        'status'
+        'user_id'
     ];
-
-    public function crops()
+    protected $withCount = ['employees'];
+    public function user(): BelongsTo
     {
-        return $this->hasMany(Crop::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function activities()
+    public function stocks(): HasMany
     {
-        return $this->hasMany(Activity::class);
+        return $this->hasMany(Stock::class);
+    }
+
+    public function employees(): HasMany
+    {
+        return $this->hasMany(Employee::class);
+    }
+
+    public function plans(): HasMany
+    {
+        return $this->hasMany(Plan::class);
+    }
+
+    public function executions(): HasMany
+    {
+        return $this->hasMany(Execution::class);
+    }
+
+    public function machinery(): HasMany
+    {
+        return $this->hasMany(Machinery::class);
     }
 } 

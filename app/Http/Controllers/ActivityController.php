@@ -34,11 +34,11 @@ class ActivityController extends Controller
 
         $activity = Activity::create($validated);
         
-        // Verificar y reservar recursos
+        // Check and reserve resources
         $this->checkAndReserveResources($activity);
 
         return response()->json([
-            'message' => 'Actividad creada exitosamente',
+            'message' => 'Activity created successfully',
             'data' => $activity
         ], 201);
     }
@@ -46,13 +46,13 @@ class ActivityController extends Controller
     private function checkAndReserveResources(Activity $activity)
     {
         foreach ($activity->resource_requirements as $resource) {
-            // Verificar disponibilidad en el stock
+            // Check availability in stock
             $stock = Stock::where('item_name', $resource['item'])
                          ->where('farm_id', $activity->farm_id)
                          ->first();
 
             if ($stock && $stock->quantity >= $resource['quantity']) {
-                // Reservar recursos
+                // Reserve resources
                 $stock->quantity -= $resource['quantity'];
                 $stock->save();
             }

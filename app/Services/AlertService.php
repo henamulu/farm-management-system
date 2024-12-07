@@ -3,46 +3,49 @@
 namespace App\Services;
 
 use App\Models\Alert;
-use App\Models\Stock;
-use App\Events\AlertTriggered;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\StockAlert;
+use App\Notifications\WeatherAlert;
 
 class AlertService
 {
-    public function checkStockLevels()
+    public function createStockAlert($stock)
     {
-        $lowStockItems = Stock::where('quantity', '<=', 'minimum_threshold')
-            ->get();
+        if ($stock->isLowStock()) {
+            $alert = Alert::create([
+                'type' => 'stock',
+                'message' => "Low stock alert for {$stock->item_name}",
+                'severity' => 'medium',
+                'farm_id' => $stock->farm_id
+            ]);
 
-        foreach ($lowStockItems as $item) {
-            $this->createStockAlert($item);
+            // Notify farm managers
+            $managers = User::whereHas('farms', function($query) use ($stock) {
+                $query->where('id', $stock->farm_id);
+            })->get();
+
+            Notification::send($managers, new StockAlert($alert));
+
+            return $alert;
         }
     }
 
-    public function createStockAlert(Stock $stock)
+    public function createWeatherAlert($condition, $farm_id)
     {
         $alert = Alert::create([
-            'type' => 'stock_level',
-            'message' => "Nivel bajo de stock para {$stock->item_name}",
+            'type' => 'weather',
+            'message' => "Weather alert: {$condition}",
             'severity' => 'high',
-            'farm_id' => $stock->farm_id,
-            'resource_id' => $stock->id,
-            'resource_type' => Stock::class,
-            'is_read' => false
+            'farm_id' => $farm_id
         ]);
 
-        event(new AlertTriggered($alert));
+        $managers = User::whereHas('farms', function($query) use ($farm_id) {
+            $query->where('id', $farm_id);
+        })->get();
+
+        Notification::send($managers, new WeatherAlert($alert));
 
         return $alert;
-    }
-
-    public function checkActivityDeadlines()
-    {
-        $nearDeadlineActivities = Activity::where('end_date', '<=', now()->addDays(3))
-            ->where('status', '!=', 'completed')
-            ->get();
-
-        foreach ($nearDeadlineActivities as $activity) {
-            $this->createActivityAlert($activity);
-        }
     }
 } 

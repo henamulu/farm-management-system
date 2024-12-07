@@ -28,7 +28,7 @@ class NotificationController extends Controller
     public function markAsRead(Notification $notification)
     {
         $notification->update(['read_at' => now()]);
-        return response()->json(['message' => 'Notificación marcada como leída']);
+        return response()->json(['message' => 'Notification marked as read']);
     }
 
     public function getUnreadCount()

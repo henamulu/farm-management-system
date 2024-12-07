@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('item_name');
-            $table->string('category');
-            $table->decimal('quantity', 10, 2);
-            $table->string('unit');
-            $table->decimal('minimum_threshold', 10, 2);
+            $table->string('name');
+            $table->string('type'); // tipo de stock (semillas, fertilizantes, etc.)
+            $table->integer('quantity');
+            $table->string('unit'); // unidad de medida
+            $table->decimal('price', 10, 2)->nullable();
             $table->foreignId('farm_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
