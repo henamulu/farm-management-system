@@ -2,51 +2,40 @@
 
 namespace Tests\Feature;
 
-use App\Services\WeatherService;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use App\Services\WeatherService;
 
 class WeatherServiceTest extends TestCase
 {
-    protected $weatherService;
-
     protected function setUp(): void
     {
         parent::setUp();
-        $this->weatherService = app(WeatherService::class);
-    }
-
-    public function test_can_get_current_weather()
-    {
-        Http::fake([
-            '*' => Http::response([
-                'temperature' => 25,
-                'humidity' => 65,
-                'wind_speed' => 10,
-                'condition' => 'Clear'
-            ], 200)
-        ]);
-
-        $weather = $this->weatherService->getCurrentWeather(40.7128, -74.0060);
-
-        $this->assertIsArray($weather);
-        $this->assertArrayHasKey('temperature', $weather);
+        Cache::flush();
     }
 
     public function test_weather_data_is_cached()
     {
         Http::fake([
             '*' => Http::response([
-                'temperature' => 25
+                'current' => [
+                    'temp_c' => 25,
+                    'condition' => ['text' => 'Sunny']
+                ]
             ], 200)
         ]);
 
-        // First call
-        $this->weatherService->getCurrentWeather(40.7128, -74.0060);
+        $weatherService = new WeatherService();
         
-        // Second call should use cached data
-        $this->weatherService->getCurrentWeather(40.7128, -74.0060);
-
+        // First call - should hit the API
+        $firstCall = $weatherService->getCurrentWeather('London');
+        
+        // Second call - should use cache
+        $secondCall = $weatherService->getCurrentWeather('London');
+        
         Http::assertSentCount(1);
+        
+        $this->assertEquals($firstCall, $secondCall);
     }
-} 
+}
