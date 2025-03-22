@@ -8,4 +8,13 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+     server: {
+        port: 3000,
+        open: true
+    },
+    build: {
+        outDir: 'dist',  // Cambiar de 'public/build' a 'dist'
+        assetsDir: 'assets',
+        emptyOutDir: true
+    }
 });
