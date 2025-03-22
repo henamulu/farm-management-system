@@ -1,5 +1,5 @@
 {
     "buildCommand": "npm run build",
     "outputDirectory": "public",
-    "framework": "laravel"
+    "framework": "vite"
 }
